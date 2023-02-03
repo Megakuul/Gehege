@@ -40,3 +40,5 @@ services:
     image: gehegefrontend
     ports:
       - 6005:80
+    environment:
+      API_URL: http://localhost:6004
