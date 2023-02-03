@@ -1,0 +1,10 @@
+{
+  "compilerOptions": {
+    "outDir": "dist",
+    "sourceMap": true,
+    "strict": true,
+    "lib": ["esnext"],
+    "esModuleInterop": true
+  },
+  "exclude": ["node_modules", "**/node_modules/*"]
+}
