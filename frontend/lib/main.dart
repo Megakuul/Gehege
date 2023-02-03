@@ -1,12 +1,16 @@
 import 'package:flutter/material.dart';
 import 'package:flutterprojects/gehege.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'drawer.dart';
 
-void main() {
+Future<void> main() async {
+  await dotenv.load();
+
   runApp(const MyApp());
 }
 
-const String api_base_url = String.fromEnvironment("API_URL", defaultValue: "https://api.gehege.ch");
+
+String api_base_url = dotenv.env['API_URL'] ?? 'API_URL not found';
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
