@@ -207,7 +207,10 @@ Quelle: Internet + Ich
 
 Ich habe auch hier natürlich die eigene Software &quot;Gehege&quot; verwendet, daher ist auch das Docker Compose file von dieser Software.
 
-Das untenstehende Docker Compose file installiert einen MongoDB Container und eine Backend-API. Zudem auch den Frontendcontainer.
+Das untenstehende Docker Compose file installiert einen MongoDB Container und eine Backend-API. Zudem auch den Frontendcontainer, wichtig ist das der Frontendcontainer zuerst erstellt werden muss, dafür liegt im "frontend" directory ein Powershell-Skript "buildapp.ps1" dieses nimmt zwei Argumente an, 1. Die URL der API 2. Der Name des Containers. Damit das Skript ausgeführt werden kann, muss sowohl das Flutter SDK wie auch Docker installiert sein.
+```
+.\buildapp.ps1 https://gehegeapi.megakuul.ch gehegefrontend:latest
+```
 
 ```
 version: '3.7'
