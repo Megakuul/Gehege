@@ -39,7 +39,7 @@ services:
       con_mongodb_api:
         ipv4_address: 172.14.0.20
   frontend_container:
-    image: gehegefrontend:latest
+    image: gehegefrontend
     ports:
       - 6005:80
     environment:
