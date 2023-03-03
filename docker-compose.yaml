@@ -31,6 +31,8 @@ services:
       DB_USER: root
       DB_PASSWORD: rootpassword
       DB_DATABASE: gehege
+      GEHEGE_ADMIN: admin
+      GEHEGE_ADMIN_PW: adminpassword
     ports:
       - 6004:6004
     networks:

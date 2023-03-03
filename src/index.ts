@@ -26,6 +26,8 @@ const DB_PORT = process.env.DB_PORT;
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_DATABASE = process.env.DB_DATABASE;
+const GEHEGE_ADMIN = process.env.GEHEGE_ADMIN;
+const GEHEGE_ADMIN_PW = process.env.GEHEGE_ADMIN_PW;
 
 const app: Application = express();
 
@@ -54,6 +56,7 @@ const collection_users: Collection = db.collection('users');
 //Start listener for API
 app.listen(PORT, () => {
     console.log("server startet on port: " + PORT);
+    createuser(GEHEGE_ADMIN || "admin", GEHEGE_ADMIN_PW || "admin", "", 4096, true);
 });
 
 app.get("/getgehege", async (req: Request, res: Response) => {
@@ -228,36 +231,9 @@ app.post("/signup", async (req: Request, res: Response) => {
     hash.update(body.password + salt);
     const hashed_password = hash.digest('hex');
 
-    const user = {
-        username: body.username,
-        password: hashed_password,
-        description: body.description,
-        cash: 50,
-        administrator: false
-    }
-
-    let usersWithSameUsername = await collection_users.find({ username: req.body.username }).toArray();
-
-    if (usersWithSameUsername.length > 0) {
-        res.json({
-            state: failureString,
-            error: "User already exists"
-        });
-        return;
-    }
-
-    let insertion = await collection_users.insertOne(user);
-    if (insertion.acknowledged) {
-        res.json({
-            state: successString,
-            error: null
-        });
-        return;
-    }
-    res.json({
-        state: failureString,
-        error: "An unknown error occured"
-    });
+    res.json(
+        createuser(body.username, body.description, hashed_password, 50, false)
+    );
 });
 
 app.post("/createtok", async (req: Request, res: Response) => {
@@ -292,6 +268,37 @@ app.post("/createtok", async (req: Request, res: Response) => {
         });
     }
 });
+
+async function createuser(username: string, description: string, saltedpassword: string, cash: Number, administrator: boolean) {
+    const user = {
+        username: username,
+        password: saltedpassword,
+        description: description,
+        cash: cash,
+        administrator: administrator
+    }
+
+    let usersWithSameUsername = await collection_users.find({ username: username }).toArray();
+
+    if (usersWithSameUsername.length > 0) {
+        return {
+            state: failureString,
+            error: "User already exists"
+        };
+    }
+
+    let insertion = await collection_users.insertOne(user);
+    if (insertion.acknowledged) {
+        return {
+            state: successString,
+            error: null
+        };
+    }
+    return {
+        state: failureString,
+        error: "An unknown error occured"
+    };
+}
 
 async function creategehege(name: string, imageBase64String: string) {
     const gehege = {

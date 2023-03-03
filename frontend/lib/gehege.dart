@@ -56,7 +56,15 @@ class _GehegeBodyState extends State<GehegeBody> {
             if (snapshot.hasData) {
               return GehegeList(snapshot.data);
             } else if (snapshot.hasError) {
-              return Text('${snapshot.error}');
+              WidgetsBinding.instance.addPostFrameCallback((_) => {
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    backgroundColor: Colors.red,
+                    content: Text("Failed to connect to Backend API, make sure there is a valid Gehege Backend at: $api_base_url is available. Or change the config at /assets/gehege.conf.json")
+                  )
+                )
+              });
+              return Text('Error: ${snapshot.error}');
             }
             return const CircularProgressIndicator();
           },

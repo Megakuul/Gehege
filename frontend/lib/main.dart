@@ -1,13 +1,21 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutterprojects/gehege.dart';
 import 'drawer.dart';
 
-void main() {
+import 'dart:convert';
+
+String api_base_url = "Not loaded";
+
+Future<void> main() async {
   runApp(const MyApp());
+  api_base_url = await loadconfig();
 }
 
-
-String api_base_url = String.fromEnvironment("API_URL");
+Future<String> loadconfig() async {
+  Map jsonString = const JsonDecoder().convert(await rootBundle.loadString('assets/gehege.conf.json'));
+  return jsonString["api_url"] ?? "Not found";
+}
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
@@ -18,7 +26,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       title: 'Gehege',
       theme: ThemeData(
-        primarySwatch: Colors.blue,
+        primarySwatch: Colors.indigo,
       ),
       home: const MainPage(title: 'Gehege'),
     );
@@ -47,6 +55,7 @@ class _MainPageState extends State<MainPage> {
     return Scaffold(
       key: _key,
       appBar: AppBar(
+        backgroundColor: Colors.black,
         leading: IconButton(
           icon: const Icon(Icons.account_circle_outlined),
           onPressed: () => {
