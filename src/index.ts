@@ -37,6 +37,9 @@ app.use(cookieParser());
  
 app.use(express.json());
 
+// Serve static files from the "public" directory
+app.use(express.static('public'));
+
 const uri = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
 
 const client = new MongoClient(uri);
@@ -54,9 +57,9 @@ const collection_gehege: Collection = db.collection('gehege');
 const collection_users: Collection = db.collection('users');
 
 //Start listener for API
-app.listen(PORT, () => {
+app.listen(PORT, async function() {
     console.log("server startet on port: " + PORT);
-    createuser(GEHEGE_ADMIN || "admin", GEHEGE_ADMIN_PW || "admin", "", 4096, true);
+    console.log(await createuser(GEHEGE_ADMIN || "admin", "", GEHEGE_ADMIN_PW || "admin", 4096, true));
 });
 
 app.get("/getgehege", async (req: Request, res: Response) => {
@@ -226,13 +229,9 @@ app.post("/changeuserinfo", async (req: Request, res: Response) => {
 
 app.post("/signup", async (req: Request, res: Response) => {
     const body = req.body;
-    const hash = crypto.createHash(hashAlgorithm);
-
-    hash.update(body.password + salt);
-    const hashed_password = hash.digest('hex');
 
     res.json(
-        createuser(body.username, body.description, hashed_password, 50, false)
+        createuser(body.username, body.description, body.password, 50, false)
     );
 });
 
@@ -269,10 +268,16 @@ app.post("/createtok", async (req: Request, res: Response) => {
     }
 });
 
-async function createuser(username: string, description: string, saltedpassword: string, cash: Number, administrator: boolean) {
+async function createuser(username: string, description: string, password: string, cash: Number, administrator: boolean) {
+
+    const hash = crypto.createHash(hashAlgorithm);
+
+    hash.update(password + salt);
+    const hashed_password = hash.digest('hex');
+
     const user = {
         username: username,
-        password: saltedpassword,
+        password: hashed_password,
         description: description,
         cash: cash,
         administrator: administrator

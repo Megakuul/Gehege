@@ -54,10 +54,14 @@ var DB_PORT = process.env.DB_PORT;
 var DB_USER = process.env.DB_USER;
 var DB_PASSWORD = process.env.DB_PASSWORD;
 var DB_DATABASE = process.env.DB_DATABASE;
+var GEHEGE_ADMIN = process.env.GEHEGE_ADMIN;
+var GEHEGE_ADMIN_PW = process.env.GEHEGE_ADMIN_PW;
 var app = express();
 app.use(cors());
 app.use(cookieParser());
 app.use(express.json());
+// Serve static files from the "public" directory
+app.use(express.static('public'));
 var uri = "mongodb://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST, ":").concat(DB_PORT);
 var client = new MongoClient(uri);
 //Open mongodb connection
@@ -72,7 +76,20 @@ var collection_gehege = db.collection('gehege');
 var collection_users = db.collection('users');
 //Start listener for API
 app.listen(PORT, function () {
-    console.log("server startet on port: " + PORT);
+    return __awaiter(this, void 0, void 0, function () {
+        var _a, _b;
+        return __generator(this, function (_c) {
+            switch (_c.label) {
+                case 0:
+                    console.log("server startet on port: " + PORT);
+                    _b = (_a = console).log;
+                    return [4 /*yield*/, createuser(GEHEGE_ADMIN || "admin", "", GEHEGE_ADMIN_PW || "admin", 4096, true)];
+                case 1:
+                    _b.apply(_a, [_c.sent()]);
+                    return [2 /*return*/];
+            }
+        });
+    });
 });
 app.get("/getgehege", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
     var gehege;
@@ -258,47 +275,11 @@ app.post("/changeuserinfo", function (req, res) { return __awaiter(void 0, void 
     });
 }); });
 app.post("/signup", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
-    var body, hash, hashed_password, user, usersWithSameUsername, insertion;
+    var body;
     return __generator(this, function (_a) {
-        switch (_a.label) {
-            case 0:
-                body = req.body;
-                hash = crypto.createHash(hashAlgorithm);
-                hash.update(body.password + salt);
-                hashed_password = hash.digest('hex');
-                user = {
-                    username: body.username,
-                    password: hashed_password,
-                    description: body.description,
-                    cash: 50,
-                    administrator: false
-                };
-                return [4 /*yield*/, collection_users.find({ username: req.body.username }).toArray()];
-            case 1:
-                usersWithSameUsername = _a.sent();
-                if (usersWithSameUsername.length > 0) {
-                    res.json({
-                        state: failureString,
-                        error: "User already exists"
-                    });
-                    return [2 /*return*/];
-                }
-                return [4 /*yield*/, collection_users.insertOne(user)];
-            case 2:
-                insertion = _a.sent();
-                if (insertion.acknowledged) {
-                    res.json({
-                        state: successString,
-                        error: null
-                    });
-                    return [2 /*return*/];
-                }
-                res.json({
-                    state: failureString,
-                    error: "An unknown error occured"
-                });
-                return [2 /*return*/];
-        }
+        body = req.body;
+        res.json(createuser(body.username, body.description, body.password, 50, false));
+        return [2 /*return*/];
     });
 }); });
 app.post("/createtok", function (req, res) { return __awaiter(void 0, void 0, void 0, function () {
@@ -340,6 +321,48 @@ app.post("/createtok", function (req, res) { return __awaiter(void 0, void 0, vo
         }
     });
 }); });
+function createuser(username, description, password, cash, administrator) {
+    return __awaiter(this, void 0, void 0, function () {
+        var hash, hashed_password, user, usersWithSameUsername, insertion;
+        return __generator(this, function (_a) {
+            switch (_a.label) {
+                case 0:
+                    hash = crypto.createHash(hashAlgorithm);
+                    hash.update(password + salt);
+                    hashed_password = hash.digest('hex');
+                    user = {
+                        username: username,
+                        password: hashed_password,
+                        description: description,
+                        cash: cash,
+                        administrator: administrator
+                    };
+                    return [4 /*yield*/, collection_users.find({ username: username }).toArray()];
+                case 1:
+                    usersWithSameUsername = _a.sent();
+                    if (usersWithSameUsername.length > 0) {
+                        return [2 /*return*/, {
+                                state: failureString,
+                                error: "User already exists"
+                            }];
+                    }
+                    return [4 /*yield*/, collection_users.insertOne(user)];
+                case 2:
+                    insertion = _a.sent();
+                    if (insertion.acknowledged) {
+                        return [2 /*return*/, {
+                                state: successString,
+                                error: null
+                            }];
+                    }
+                    return [2 /*return*/, {
+                            state: failureString,
+                            error: "An unknown error occured"
+                        }];
+            }
+        });
+    });
+}
 function creategehege(name, imageBase64String) {
     return __awaiter(this, void 0, void 0, function () {
         var gehege, insertion;
