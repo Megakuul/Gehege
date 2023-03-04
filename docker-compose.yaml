@@ -23,7 +23,7 @@ services:
         ipv4_address: 172.14.0.10
 
   api_container:
-    image: gehege
+    image: megakuul/gehege:latest
     environment:
       PORT: 6004
       DB_HOST: 172.14.0.10
