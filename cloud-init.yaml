@@ -1,0 +1,34 @@
+#cloud-config
+hostname: gehege-instance
+
+package_update: true
+
+packages:
+  - docker.io
+  - docker-compose
+  - net-tools
+
+# Write the Docker Compose file
+write_files:
+  - path: /gehege/docker-compose.yml
+    content: |
+      version: '3.7'
+      services:
+        api_container:
+          image: megakuul/gehege:latest
+          restart: always
+          environment:
+            PORT: <80>
+            DB_HOST: <DBHost>
+            DB_PORT: <27017>
+            DB_USER: <api>
+            DB_PASSWORD: <password>
+            DB_DATABASE: <gehege>
+            DB_USEHOSTNAME: <"true">
+            GEHEGE_ADMIN: <admin>
+            GEHEGE_ADMIN_PW: <adminpassword>
+          ports:
+            - 80:80
+
+runcmd:
+  - [sh, -c, "docker-compose -f /gehege/docker-compose.yml up -d"]
