@@ -90,7 +90,7 @@ app.post("/donate", async (req: Request, res: Response) => {
             return;
         }
         
-        if (user.cash > 0) {
+        if (user.cash > 0 && user.cash > Number(body.cash) ) {
             try {
                 //Update user cash
                 collection_users.updateOne(

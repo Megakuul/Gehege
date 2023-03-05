@@ -128,7 +128,7 @@ app.post("/donate", function (req, res) { return __awaiter(void 0, void 0, void 
                             });
                             return [2 /*return*/];
                         }
-                        if (user.cash > 0) {
+                        if (user.cash > 0 && user.cash > Number(body.cash)) {
                             try {
                                 //Update user cash
                                 collection_users.updateOne({ _id: user._id }, {
