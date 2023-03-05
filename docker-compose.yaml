@@ -21,7 +21,6 @@ services:
     networks:
       con_mongodb_api:
         ipv4_address: 172.14.0.10
-
   api_container:
     image: megakuul/gehege:latest
     environment:

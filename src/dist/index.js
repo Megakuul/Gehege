@@ -54,6 +54,7 @@ var DB_PORT = process.env.DB_PORT;
 var DB_USER = process.env.DB_USER;
 var DB_PASSWORD = process.env.DB_PASSWORD;
 var DB_DATABASE = process.env.DB_DATABASE;
+var DB_USEHOSTNAME = process.env.DB_USEHOSTNAME;
 var GEHEGE_ADMIN = process.env.GEHEGE_ADMIN;
 var GEHEGE_ADMIN_PW = process.env.GEHEGE_ADMIN_PW;
 var app = express();
@@ -62,7 +63,8 @@ app.use(cookieParser());
 app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static('public'));
-var uri = "mongodb://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST, ":").concat(DB_PORT);
+var uri = DB_USEHOSTNAME || false ? "mongodb+srv://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST) :
+    "mongodb://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST, ":").concat(DB_PORT);
 var client = new MongoClient(uri);
 //Open mongodb connection
 client.connect(function (err) {

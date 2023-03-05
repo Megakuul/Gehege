@@ -26,6 +26,7 @@ const DB_PORT = process.env.DB_PORT;
 const DB_USER = process.env.DB_USER;
 const DB_PASSWORD = process.env.DB_PASSWORD;
 const DB_DATABASE = process.env.DB_DATABASE;
+const DB_USEHOSTNAME = process.env.DB_USEHOSTNAME;
 const GEHEGE_ADMIN = process.env.GEHEGE_ADMIN;
 const GEHEGE_ADMIN_PW = process.env.GEHEGE_ADMIN_PW;
 
@@ -40,7 +41,8 @@ app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static('public'));
 
-const uri = `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
+const uri = DB_USEHOSTNAME || false ? `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}` :
+     `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
 
 const client = new MongoClient(uri);
 
