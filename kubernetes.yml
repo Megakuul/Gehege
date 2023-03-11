@@ -49,3 +49,17 @@ spec:
     targetPort: 80
   selector:
     app: gehege
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gehege-np-service
+spec:
+  type: NodePort
+  ports:
+  - name: http
+    port: 80
+    targetPort: 80
+    nodePort: 30080
+  selector:
+    app: gehege
