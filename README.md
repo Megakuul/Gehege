@@ -75,6 +75,7 @@ services:
       DB_DATABASE: gehege
       GEHEGE_ADMIN: admin
       GEHEGE_ADMIN_PW: adminpassword
+      DB_USEHOSTNAME: false
     ports:
       - 6004:6004
     networks:
