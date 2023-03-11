@@ -1,0 +1,51 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: gehege-deployment
+spec:
+  replicas: 5
+  selector:
+    matchLabels:
+      app: gehege
+  template:
+    metadata:
+      labels:
+        app: gehege
+    spec:
+      containers:
+      - name: gehege-backend
+        image: megakuul/gehege:latest
+        ports:
+        - containerPort: 80
+        env:
+        - name: PORT
+          value: "80"
+        - name: DB_HOST
+          value: "DBHostname"
+        - name: DB_PORT
+          value: "27017"
+        - name: DB_USER
+          value: "apiuser"
+        - name: DB_PASSWORD
+          value: "mvt_yft9CHM!fpu-jmt"
+        - name: DB_DATABASE
+          value: "gehege"
+        - name: GEHEGE_ADMIN
+          value: "admin"
+        - name: GEHEGE_ADMIN_PW
+          value: "RypJzl6jyaZAnkOdt8TY" 
+        - name: DB_USEHOSTNAME
+          value: "true"
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: gehege-lb-service
+spec:
+  type: LoadBalancer
+  ports:
+  - port: 80
+    targetPort: 80
+  selector:
+    app: gehege
