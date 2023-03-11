@@ -36,19 +36,6 @@ spec:
           value: "RypJzl6jyaZAnkOdt8TY" 
         - name: DB_USEHOSTNAME
           value: "true"
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: gehege-lb-service
-spec:
-  type: LoadBalancer
-  ports:
-  - port: 80
-    targetPort: 80
-  selector:
-    app: gehege
 ---
 apiVersion: v1
 kind: Service
