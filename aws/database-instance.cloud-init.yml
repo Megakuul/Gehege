@@ -1,0 +1,28 @@
+#cloud-config
+hostname: gehege-db-instance
+
+package_update: true
+
+packages:
+  - docker.io
+  - docker-compose
+  - net-tools
+
+# Write the Docker Compose file
+write_files:
+  - path: /gehege/docker-compose.yml
+    content: |
+      version: '3.7'
+      services:
+        mongodb_container:
+          image: mongo:latest
+          environment:
+            MONGO_INITDB_ROOT_USERNAME: root
+            MONGO_INITDB_ROOT_PASSWORD: rootpassword
+          ports:
+            - 27017:27017
+          volumes:
+            - ./data/db:/data/db
+
+runcmd:
+  - [sh, -c, "docker-compose -f /gehege/docker-compose.yml up -d"]
