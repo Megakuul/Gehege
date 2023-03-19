@@ -63,13 +63,13 @@ app.use(cookieParser());
 app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static('public'));
-var uri = DB_USEHOSTNAME || false ? "mongodb+srv://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST) :
+var uri = DB_USEHOSTNAME == "true" || false ? "mongodb+srv://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST) :
     "mongodb://".concat(DB_USER, ":").concat(DB_PASSWORD, "@").concat(DB_HOST, ":").concat(DB_PORT);
 var client = new MongoClient(uri);
 //Open mongodb connection
 client.connect(function (err) {
     if (err) {
-        console.log("An error occured: " + err);
+        console.log("An error occured: " + err.message);
         process.exit(4);
     }
 });

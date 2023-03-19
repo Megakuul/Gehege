@@ -41,7 +41,7 @@ app.use(express.json());
 // Serve static files from the "public" directory
 app.use(express.static('public'));
 
-const uri = DB_USEHOSTNAME || false ? `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}` :
+const uri = DB_USEHOSTNAME=="true" || false ? `mongodb+srv://${DB_USER}:${DB_PASSWORD}@${DB_HOST}` :
      `mongodb://${DB_USER}:${DB_PASSWORD}@${DB_HOST}:${DB_PORT}`;
 
 const client = new MongoClient(uri);
@@ -49,7 +49,7 @@ const client = new MongoClient(uri);
 //Open mongodb connection
 client.connect((err: Error) => {
     if (err) {
-        console.log("An error occured: " + err);
+        console.log("An error occured: " + err.message);
         process.exit(4);
     }
 });
